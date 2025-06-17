@@ -1,0 +1,146 @@
+name: Frero
+
+on:
+  push:
+    branches:
+      - develop
+      
+
+jobs:
+  HelloWorld:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test Hello World
+        run: echo hello
+
+  Backend:
+      needs: [Helloworld]
+      runs-on: ubuntu-latest
+      defautls:
+        run:
+          working-directory: backend
+
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MARIA_DB_ROOT_PASSWORD: toor
+          MARIA_DB_DATABASE: test
+          MARIA_DB_USER: test
+          MARIA_DB_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: 
+          --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env: 
+      BDD_HOST: 127.0.0.1
+      BDD_USER: test
+      BDD_PASS: test
+      BDD_NAME: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Database CNX Check
+        run: |
+          sudao apt-get install -y mysql-client
+          mysql -host 127.0.0.1 --port 3306 -u root -ptoor -e "SHOW DATABASES"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name : Install dependencies
+        run: npm install
+
+      - name: Init BDD
+        run : npm run initbdd
+
+      - name: Populate BDD
+        run: mysql -u root -ptoor -host 127.0.0.1 --port 3306 --database test < .test/insert_test_user.sql
+
+      - name: Run all tests and coverage
+        run: npm run test:cov
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: back-coverage-report
+          patch: backend/coverage
+          retention-days: 3
+  
+  Frontend:
+    needs: [Backend]
+    runs-on: ubuntu-latest
+    defaults:
+      runs:
+        working-directory: frontend
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Start build backend
+        run: |
+          cd ..
+          docker compose -f docker-compose-back-build.yaml up -d 
+          docker ps -a
+
+      - name: Sleep 10 seconds
+        uses: jasonkarns/wait-action@master
+        with:
+          time: '10s'
+      
+      - name: Test Backend Container
+        if: success()
+        run: curl http://127.0.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        
+      - name: Cypress E2E Install
+        uses: Cypress-io/github-action@v6
+        with:
+          runTests: false
+          working-directory: frontend
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start E2E Tests
+        uses: Cypress-io/github-action@v6
+        with:
+          install: false
+          start: npm run dev
+
+      - name: Generate Coverage
+        run: npm run cypress:cov
+      
+      - uses: actions/upload-artifact@v4
+        if: failure() 
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v4
+        if: always() 
+        with:
+          name: cypress-video
+          path: frontend/cypress/videos
+          retention-days: 1
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: front-coverage-report
+          path: frontend/coverage
+          retention-days: 3
+
+      - name: Clean docker
+        if: always()
+        run: |
+          cd..
+          docker compose -f docker-compose-back-build.yaml down
