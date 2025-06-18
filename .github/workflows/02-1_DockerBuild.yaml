@@ -21,7 +21,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ env.USERNAME }}
-          password: ${{ secrets.MONOREPO_PAT }}
+          password: ${{ secrets.GOLF_TOKEN }}
 
       - name: Downcase Image Name
         run : echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
@@ -32,7 +32,6 @@ jobs:
           context: backend
           push: true
           tags: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME_LOWER }}-back:latest
-          # ghcr.io/floriansp40/golfepade-back
 
       - name: Front Build Push
         uses: docker/build-push-action@v4
@@ -40,4 +39,3 @@ jobs:
           context: frontend
           push: true
           tags: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME_LOWER }}-front:latest
-          # ghcr.io/floriansp40/golfepade-front

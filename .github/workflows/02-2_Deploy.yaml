@@ -31,10 +31,10 @@ jobs:
           password: ${{ secrets.AZURE_PASSWORD }}
 
           script: |
-            echo ${{secrets.MONOREPO_PAT}} | docker login ghcr.io -u Floriansp40 --password-stdin
+            echo ${{secrets.GOLF_TOKEN}} | docker login ghcr.io -u Calystar --password-stdin
 
-            docker pull ghcr.io/floriansp40/golfepade-back:latest
-            docker pull ghcr.io/floriansp40/golfepade-front:latest
+            docker pull ghcr.io/calystar/golfhepad-back:latest
+            docker pull ghcr.io/calystar/golfhepad-front:latest
 
             docker compose up -d
       
