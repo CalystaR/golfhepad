@@ -6,11 +6,11 @@ on:
       - develop
 
 jobs:
-  # Test Back Front:
-  #   uses: ./.github/workflows/01-1_TestBackFront.yaml
+  Test Back Front:
+    uses: ./.github/workflows/01-1_TestBackFront.yaml
 
   Quality SonarQube:
-    # needs: [Test Back Front]
+    needs: [Test Back Front]
     uses: ./.github/workflows/01-2_SonarQube.yaml 
 
   # Security_Snyk:
