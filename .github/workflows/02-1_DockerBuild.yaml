@@ -21,7 +21,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ env.USERNAME }}
-          password: ${{ secrets.GOLF_TOKEN }}
+          password: ${{ secrets.TOKEN_GOLF }}
 
       - name: Downcase Image Name
         run : echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}

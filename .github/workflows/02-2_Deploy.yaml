@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.AZURE_PASSWORD }}
 
           script: |
-            echo ${{secrets.GOLF_TOKEN}} | docker login ghcr.io -u Calystar --password-stdin
+            echo ${{secrets.TOKEN_GOLF}} | docker login ghcr.io -u Calystar --password-stdin
 
             docker pull ghcr.io/calystar/golfhepad-back:latest
             docker pull ghcr.io/calystar/golfhepad-front:latest
