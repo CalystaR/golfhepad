@@ -60,7 +60,7 @@ jobs:
         run: npm run initbdd
 
       - name: Populate BDD
-        run: mysql -u root -ptoor --host 127.0.0.1 --port 3306 database test < ./test/insert_test_user.sql
+        run: mysql -u root -ptoor --host 127.0.0.1 --port 3306 -D test < ./test/insert_test_user.sql
       
       - name: Run all test and convergae
         run: npm run test:cov
