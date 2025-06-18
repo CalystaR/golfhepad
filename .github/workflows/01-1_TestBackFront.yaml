@@ -1,4 +1,4 @@
-name: 01 - 1 Test Back Front
+name: 01-1 - Test Back Front
 
 on:
   workflow_call
