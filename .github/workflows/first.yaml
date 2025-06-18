@@ -6,7 +6,6 @@ on:
       - develop
 
 jobs:
-
   Helloworld:
     runs-on: ubuntu-latest
 
@@ -15,11 +14,11 @@ jobs:
         run: echo Hello
 
   Backend:
-    needs: [Helloworld] 
+    needs: [Helloworld]
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: monorepo/backend
+        working-directory: backend
 
     services:
       mariadb:
@@ -43,7 +42,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Database Cnx Checkout
+      - name: Database Cnx Check
         run: |
           sudo apt-get install -y mysql-client
           mysql --host 127.0.0.1 --port 3306 -u root -ptoor -e "SHOW DATABASES"
@@ -60,16 +59,16 @@ jobs:
         run: npm run initbdd
 
       - name: Populate BDD
-        run: mysql -u root -ptoor --host 127.0.0.1 --port 3306 -D test < ./test/insert_test_user.sql
-      
-      - name: Run all test and convergae
+        run: mysql -u root -ptoor --host 127.0.0.1 --port 3306 --database test < ./test/insert_test_user.sql
+
+      - name: Run all test and coverage
         run: npm run test:cov
 
-      - name: Upload Coverage Artifacts
+      - name: Upload Coverage Artifact
         uses: actions/upload-artifact@v4
         with:
           name: back-coverage-report
-          path: monorepo/backend/coverage
+          path: backend/coverage
           retention-days: 3
 
   Frontend:
@@ -77,14 +76,17 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: monorepo/frontend
+        working-directory: frontend
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Start build backend
-        run : |
+        run: |
           cd ..
           docker compose -f docker-compose-back-build.yml up -d
-          docker ps -actions
+          docker ps -a
 
       - name: Sleep 10 seconds
         uses: jakejarvis/wait-action@master
@@ -97,12 +99,12 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v3
-        
+
       - name: Cypress E2E Install
         uses: cypress-io/github-action@v6
         with:
           runTests: false
-          working-directory: monorepo/frontend
+          working-directory: frontend
 
       - name: Install Dependencies
         run: npm i
@@ -111,34 +113,34 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           install: false
-          working-directory: monorepo/frontend
+          working-directory: frontend
           start: npm run dev
 
-      - name: Generate Coverage
+      - name: Generate Coverage 
         run: npm run cypress:cov
 
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
-          path: monorepo/frontend/cypress/screenshots
-          retention-days: 1
+          path: frontend/cypress/screenshots
+          retention-days: 1 
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: cypress-video
-          path: monorepo/frontend/cypress/videos
-          retention-days: 1
+          path: frontend/cypress/videos
+          retention-days: 1 
 
       - name: Upload Coverage
         uses: actions/upload-artifact@v4
         with:
           name: front-coverage-report
-          path: monorepo/frontend/coverage
+          path: frontend/coverage
           retention-days: 3
-        
-      - name: Clean docker
+
+      - name: Clean Docker
         if: always()
         run: |
           cd ..
