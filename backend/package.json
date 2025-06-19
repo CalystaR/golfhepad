@@ -22,7 +22,8 @@
         "express": "^4.19.2",
         "jsonwebtoken": "^9.0.2",
         "mysql2": "^3.9.7",
-        "sequelize": "^6.37.3"
+        "sequelize": "^6.37.3",
+        "express-rate-limit": "^7.5.0"
     },
     "devDependencies": {
         "jest": "^29.7.0",
