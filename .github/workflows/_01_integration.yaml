@@ -11,18 +11,17 @@ on:
 
 jobs:
   Test_Back_Front:
-    if: ${{ github.event_name == 'push' || github.ref_name == 'develop' }}
+    if: ${{ github.event_name == 'push'  && github.ref_name == 'develop' }}
     uses: ./.github/workflows/01-1_TestBackFront.yaml
 
-  DisplayData:
+  Display_Data:
     runs-on: ubuntu-latest
     steps:
       - run: env | sort
 
   Quality_SonarQube:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request'}}
     uses: ./.github/workflows/01-2_SonarQube.yaml
     secrets: inherit
-
 
   # Security_Snyk

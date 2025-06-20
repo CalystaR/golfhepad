@@ -3,10 +3,10 @@ name: Integration
 on:
   push:
     branches:
-      - develop
+      - marcel
 
 jobs:
-  DisplayData:
+  Display_Data:
     runs-on: ubuntu-latest
     steps:
       - run: env | sort
