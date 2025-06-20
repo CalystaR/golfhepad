@@ -1,0 +1,12 @@
+name: Integration
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  DisplayData:
+    runs-on: ubuntu-latest
+    steps:
+      - run: env | sort
