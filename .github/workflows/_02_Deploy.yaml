@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/02-1_DockerBuild.yaml
     secrets: inherit
 
-  Deploy:
-    needs: [Dockerbuild]
-    uses: ./.github/workflows/02-2_Deploy.yaml
-    secrets: inherit
+  # Deploy:
+  #   needs: [Dockerbuild]
+  #   uses: ./.github/workflows/02-2_Deploy.yaml
+  #   secrets: inherit
