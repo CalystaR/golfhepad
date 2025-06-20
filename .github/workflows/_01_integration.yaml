@@ -3,14 +3,19 @@ name: 01 - Integration
 on:
   push:
     branches:
-      - marcel
+      - develop
+
+  pull_request:
+    branches:
+      - main
 
 jobs:
   Test_Back_Front:
+    if: ${{ github.event_name == 'push' || github.ref_name == 'develop' }}
     uses: ./.github/workflows/01-1_TestBackFront.yaml
 
   Quality_SonarQube:
-    needs: [Test_Back_Front]
+    if: ${{ github.event_name == 'pull_request' || github.ref_name == 'main' }}
     uses: ./.github/workflows/01-2_SonarQube.yaml
     secrets: inherit
 
