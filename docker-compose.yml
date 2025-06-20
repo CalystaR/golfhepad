@@ -24,7 +24,7 @@ services:
 
   golf_backend:
     container_name: golf_backend_build
-    image: ghcr.io/calystar/golfhepad-back:latest
+    image: ghcr.io/calystar/golfhepad-back:jenpeuxplus
     environment:
       BDD_HOST: golf_bdd
     ports:
@@ -35,6 +35,6 @@ services:
 
   glof_frontend:
     container_name: glof_frontend
-    image: ghcr.io/calystar/golfhepad-front:latest
+    image: ghcr.io/calystar/golfhepad-front:jenpeuxplus
     ports:
       - 80:80
