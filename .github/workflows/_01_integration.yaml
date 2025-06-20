@@ -11,7 +11,7 @@ on:
 
 jobs:
   Test_Back_Front:
-    if: ${{ github.event_name == 'push' || github.ref_name == 'develop' }}
+    if: ${{ github.event_name == 'push' || github.base_ref == 'develop' }}
     uses: ./.github/workflows/01-1_TestBackFront.yaml
 
   DisplayData:
@@ -20,7 +20,7 @@ jobs:
       - run: env | sort
 
   Quality_SonarQube:
-    if: ${{ github.event_name == 'pull_request' || github.ref_name == 'main' }}
+    if: ${{ github.event_name == 'pull_request' || github.base_ref == 'main' }}
     uses: ./.github/workflows/01-2_SonarQube.yaml
     secrets: inherit
 
