@@ -3,7 +3,7 @@ name: 01 - Integration
 on:
   push:
     branches:
-      - develop
+      - marcel
 
   pull_request:
     branches:
